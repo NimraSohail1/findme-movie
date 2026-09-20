@@ -281,7 +281,8 @@ export default function MovieDetails() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.18 }}
-              style={{ flex: 1, minWidth: '280px' }}
+              className="movie-hero-details-box"
+              style={{ flex: 1, minWidth: 0, width: '100%' }}
             >
               {/* Title */}
               <h1
@@ -423,7 +424,7 @@ export default function MovieDetails() {
               )}
 
               {/* Action Buttons: Watch Trailer, Share, Watchlist */}
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <div className="movie-hero-actions" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => trailerKey && setIsTrailerOpen(true)}
                   disabled={!trailerKey}
