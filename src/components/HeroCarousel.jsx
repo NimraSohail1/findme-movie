@@ -279,9 +279,10 @@ export default function HeroCarousel({ movies = [] }) {
               </div>
             )}
 
-            {/* Overview / Synopsis */}
+            {/* Overview / Synopsis (Hidden on small mobile for clean button elevation) */}
             {currentMovie.overview && (
               <p
+                className="hero-carousel-overview"
                 style={{
                   color: 'rgba(250, 250, 250, 0.82)',
                   fontSize: '0.84rem',
@@ -299,16 +300,16 @@ export default function HeroCarousel({ movies = [] }) {
             )}
 
             {/* Action Buttons */}
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <div className="hero-action-buttons" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '8px' }}>
               <button
                 onClick={() => navigate(`/movie/${currentMovie.id}`)}
                 style={{
                   background: 'linear-gradient(135deg, #a855f7, #7e22ce)',
                   color: '#ffffff',
                   fontWeight: 700,
-                  fontSize: '0.8rem',
+                  fontSize: '0.82rem',
                   borderRadius: '8px',
-                  padding: '8px 16px',
+                  padding: '9px 18px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
@@ -328,9 +329,9 @@ export default function HeroCarousel({ movies = [] }) {
                   borderStyle: 'solid',
                   color: inWatchlist ? '#c084fc' : '#fafafa',
                   fontWeight: 600,
-                  fontSize: '0.8rem',
+                  fontSize: '0.82rem',
                   borderRadius: '8px',
-                  padding: '8px 16px',
+                  padding: '9px 18px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
@@ -402,9 +403,10 @@ export default function HeroCarousel({ movies = [] }) {
 
       {/* Pagination Bullets */}
       <div
+        className="hero-pagination-bullets"
         style={{
           position: 'absolute',
-          bottom: '14px',
+          bottom: '12px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 20,
@@ -432,21 +434,49 @@ export default function HeroCarousel({ movies = [] }) {
       </div>
 
       <style>{`
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           .hero-carousel-container {
-            height: 52vh !important;
-            min-height: 380px !important;
-            border-radius: 12px !important;
+            height: 480px !important;
+            min-height: 460px !important;
+            border-radius: 14px !important;
+          }
+          .hero-content-box {
+            padding: 16px 16px 52px !important;
+          }
+          .hero-carousel-overview {
+            display: none !important;
+          }
+          .hero-action-buttons {
+            margin-bottom: 16px !important;
+          }
+          .hero-action-buttons button {
+            padding: 9px 16px !important;
+            font-size: 0.82rem !important;
           }
           .hero-nav-arrow {
             width: 32px !important;
             height: 32px !important;
           }
           .hero-prev-arrow {
-            left: 6px !important;
+            left: 8px !important;
           }
           .hero-next-arrow {
-            right: 6px !important;
+            right: 8px !important;
+          }
+          .hero-pagination-bullets {
+            bottom: 14px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .hero-carousel-container {
+            height: 460px !important;
+            min-height: 440px !important;
+          }
+          .hero-content-box {
+            padding: 14px 14px 48px !important;
+          }
+          .hero-action-buttons {
+            margin-bottom: 14px !important;
           }
         }
       `}</style>

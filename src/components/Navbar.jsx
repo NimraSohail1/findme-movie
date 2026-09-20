@@ -291,9 +291,20 @@ export default function Navbar() {
           </NavLink>
         </nav>
 
-        {/* Live Search Bar & Theme Switcher */}
-        <div className="navbar-search-section" style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1', maxWidth: '360px', justifyContent: 'flex-end', minWidth: 0 }}>
-          <div ref={searchRef} className="navbar-search-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
+        {/* Live Search Bar & Theme Switcher & Mobile Menu */}
+        <div
+          className="navbar-search-section"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flex: '1',
+            maxWidth: '380px',
+            justifyContent: 'flex-end',
+            minWidth: 0
+          }}
+        >
+          <div ref={searchRef} className="navbar-search-wrapper" style={{ position: 'relative', width: '100%', maxWidth: '280px' }}>
             <div
               style={{
                 display: 'flex',
@@ -445,10 +456,10 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Desktop Theme Switcher Button */}
+          {/* Theme Switcher Button - Always visible directly on screen */}
           <button
             onClick={toggleTheme}
-            className="theme-toggle-btn desktop-theme-btn"
+            className="theme-toggle-btn"
             title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             style={{
@@ -474,29 +485,31 @@ export default function Navbar() {
               e.currentTarget.style.borderColor = 'var(--color-border-default)';
             }}
           >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            {isDark ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+
+          {/* Mobile Hamburger Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="mobile-menu-btn"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--color-text-primary)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: 'var(--color-input-bg)',
+              border: '1px solid var(--color-border-default)',
+              flexShrink: 0,
+              cursor: 'pointer'
+            }}
+            aria-label="Toggle Navigation Menu"
+          >
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
-
-        {/* Mobile Hamburger Menu Button */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="mobile-menu-btn"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-text-primary)',
-            padding: '7px',
-            borderRadius: '8px',
-            background: 'var(--color-input-bg)',
-            border: '1px solid var(--color-border-default)',
-            flexShrink: 0
-          }}
-          aria-label="Toggle Navigation Menu"
-        >
-          {isMobileMenuOpen ? <X size={19} /> : <Menu size={19} />}
-        </button>
       </div>
 
       {/* Mobile Drawer Menu */}
@@ -513,41 +526,6 @@ export default function Navbar() {
             overflowY: 'auto'
           }}
         >
-          {/* Mobile Theme Toggle Row */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 14px',
-              backgroundColor: 'var(--color-surface-subtle)',
-              borderRadius: '10px',
-              marginBottom: '6px'
-            }}
-          >
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {isDark ? <Moon size={16} color="var(--color-accent)" /> : <Sun size={16} color="var(--color-accent)" />}
-              {isDark ? 'Dark Mode' : 'Light Mode'}
-            </span>
-            <button
-              onClick={toggleTheme}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                borderRadius: '50px',
-                background: 'var(--color-accent-bg)',
-                border: '1px solid var(--color-accent-border)',
-                color: 'var(--color-accent)',
-                fontSize: '0.78rem',
-                fontWeight: 700
-              }}
-            >
-              {isDark ? 'Light ☀️' : 'Dark 🌙'}
-            </button>
-          </div>
-
           <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyles}>
             Home
           </NavLink>
@@ -620,19 +598,35 @@ export default function Navbar() {
             display: none !important;
           }
         }
-        @media (max-width: 899px) {
-          .desktop-theme-btn {
-            display: none !important;
+        @media (max-width: 600px) {
+          .navbar-search-section {
+            gap: 6px !important;
+          }
+          .theme-toggle-btn {
+            width: 34px !important;
+            height: 34px !important;
+          }
+          .mobile-menu-btn {
+            width: 34px !important;
+            height: 34px !important;
           }
         }
         @media (max-width: 480px) {
-          .navbar-search-section {
-            max-width: 170px !important;
+          .navbar-search-wrapper {
+            max-width: 145px !important;
           }
           .search-dropdown-results {
-            right: -50px !important;
-            width: calc(100vw - 24px) !important;
-            max-width: 320px !important;
+            position: fixed !important;
+            top: 64px !important;
+            left: 10px !important;
+            right: 10px !important;
+            width: auto !important;
+            max-width: none !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .navbar-search-wrapper {
+            max-width: 110px !important;
           }
         }
       `}</style>
