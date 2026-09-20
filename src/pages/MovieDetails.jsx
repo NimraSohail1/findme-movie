@@ -1,13 +1,143 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Play, Share2, Bookmark, Clock, Globe, Film, ChevronRight } from 'lucide-react';
+import { Star, Play, Share2, Bookmark, Clock, Globe, Film, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { tmdbService, tmdbConfig } from '../services/tmdb';
 import { saveRecentlyViewed, isInWatchlist, toggleWatchlist } from '../utils/recentlyViewed';
 import { getActorAvatar, getMoviePosterUrl, getMovieBackdropUrl, generateInitialsSvg } from '../utils/imageHelper';
 import HorizontalMovieList from '../components/HorizontalMovieList';
 import TrailerModal from '../components/TrailerModal';
 import Toast from '../components/Toast';
+
+// Expandable Review Card Component for Desktop & Mobile
+function ReviewCard({ review }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const initial = review.author?.charAt(0)?.toUpperCase() || '?';
+  const dateFormatted = review.created_at
+    ? new Date(review.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    : '';
+
+  const content = review.content || '';
+  const charLimit = 320;
+  const isLong = content.length > charLimit;
+  const displayContent = isLong && !isExpanded ? `${content.slice(0, charLimit).trim()}...` : content;
+
+  return (
+    <div
+      style={{
+        backgroundColor: 'var(--color-surface-card)',
+        border: '1px solid var(--color-border-default)',
+        borderRadius: '12px',
+        padding: '20px',
+        transition: 'all 0.2s ease'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+        <div
+          style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #a855f7, #7e22ce)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#ffffff',
+            fontWeight: 700,
+            fontSize: '0.9rem',
+            flexShrink: 0
+          }}
+        >
+          {initial}
+        </div>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <span
+            style={{
+              color: 'var(--color-text-tertiary)',
+              fontWeight: 600,
+              fontSize: '0.88rem',
+              display: 'block',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {review.author}
+          </span>
+          {dateFormatted && (
+            <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.75rem' }}>{dateFormatted}</span>
+          )}
+        </div>
+        {review.author_details?.rating && (
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+            <Star size={14} color="var(--color-accent)" fill="var(--color-accent)" />
+            <span style={{ color: 'var(--color-accent)', fontWeight: 700, fontSize: '0.85rem' }}>
+              {review.author_details.rating}/10
+            </span>
+          </div>
+        )}
+      </div>
+
+      <p
+        style={{
+          color: 'var(--color-text-secondary)',
+          fontSize: '0.88rem',
+          lineHeight: 1.7,
+          whiteSpace: 'pre-line',
+          wordBreak: 'break-word',
+          margin: 0
+        }}
+      >
+        {displayContent}
+      </p>
+
+      {isLong && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            marginTop: '12px',
+            background: 'var(--color-accent-bg)',
+            border: '1px solid var(--color-accent-border)',
+            color: 'var(--color-accent)',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            padding: '5px 12px',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'var(--color-accent)';
+            e.currentTarget.style.color = '#ffffff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'var(--color-accent-bg)';
+            e.currentTarget.style.color = 'var(--color-accent)';
+          }}
+          aria-label={isExpanded ? 'Show less review' : 'Read more review'}
+        >
+          {isExpanded ? (
+            <>
+              Show Less <ChevronUp size={14} />
+            </>
+          ) : (
+            <>
+              Read More <ChevronDown size={14} />
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function MovieDetails() {
   const { id } = useParams();
@@ -831,65 +961,9 @@ export default function MovieDetails() {
               Reviews
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {reviews.map((rev) => {
-                const initial = rev.author?.charAt(0)?.toUpperCase() || '?';
-                const dateFormatted = rev.created_at
-                  ? new Date(rev.created_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })
-                  : '';
-                return (
-                  <div
-                    key={rev.id}
-                    style={{
-                      backgroundColor: 'var(--color-surface-card)',
-                      border: '1px solid var(--color-border-default)',
-                      borderRadius: '12px',
-                      padding: '20px'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #a855f7, #7e22ce)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#ffffff',
-                          fontWeight: 700,
-                          fontSize: '0.9rem'
-                        }}
-                      >
-                        {initial}
-                      </div>
-                      <div>
-                        <span style={{ color: 'var(--color-text-tertiary)', fontWeight: 600, fontSize: '0.88rem', display: 'block' }}>
-                          {rev.author}
-                        </span>
-                        {dateFormatted && (
-                          <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.75rem' }}>{dateFormatted}</span>
-                        )}
-                      </div>
-                      {rev.author_details?.rating && (
-                        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Star size={14} color="var(--color-accent)" fill="var(--color-accent)" />
-                          <span style={{ color: 'var(--color-accent)', fontWeight: 700, fontSize: '0.85rem' }}>
-                            {rev.author_details.rating}/10
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.88rem', lineHeight: 1.7 }}>
-                      {rev.content}
-                    </p>
-                  </div>
-                );
-              })}
+              {reviews.map((rev) => (
+                <ReviewCard key={rev.id} review={rev} />
+              ))}
             </div>
           </section>
         )}
